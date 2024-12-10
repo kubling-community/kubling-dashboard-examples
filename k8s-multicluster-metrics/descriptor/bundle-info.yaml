@@ -1,0 +1,5 @@
+virtualDatabases:
+  - 'vdb/DashboardVDB.yaml'
+scheduledScripts:
+  - scriptFilePath: "systasks/scheduled/save_current_metrics.js"
+    cron: "0/30 * * * * *"

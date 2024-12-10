@@ -1,0 +1,54 @@
+---
+name: "{{ vdb_name }}"
+version: "{{ vdb_version }}"
+
+dataSources:
+  - name: "tsdb_metrics"
+    dataSourceType: "POSTGRESQL"
+    configObject:
+      dataSourceName: "tsdb-postgresql"
+      serverAddress: "{{ timescale_host }}"
+      serverPort: {{ timescale_port }}
+      databaseName: "{{ timescale_db }}"
+      userName: "{{ timescale_user }}"
+      token: "{{ timescale_password }}"
+      maxConnectionPoolSize: 5
+      minConnectionPoolSize: 1
+      maxConnectionIdleMilliseconds: 7200000
+      maxConnectionLifeTimeMilliseconds: 14400000
+      cache:
+        enabled: false
+        ttlSeconds: 43200
+      allowBruteForceOperations: false
+    schema:
+      type: "PHYSICAL"
+      properties:
+        importer.schemaName: "{{ timescale_metrics_schema }}"
+        importer.useFullSchemaName: "true"
+        importer.useCatalogName: "false"
+      cacheDefaultStrategy: "CACHE"
+
+  - name: "tsdb_audit"
+    dataSourceType: "POSTGRESQL"
+    configObject:
+      dataSourceName: "tsdb-postgresql"
+      serverAddress: "{{ timescale_host }}"
+      serverPort: {{ timescale_port }}
+      databaseName: "{{ timescale_db }}"
+      userName: "{{ timescale_user }}"
+      token: "{{ timescale_password }}"
+      maxConnectionPoolSize: 5
+      minConnectionPoolSize: 1
+      maxConnectionIdleMilliseconds: 7200000
+      maxConnectionLifeTimeMilliseconds: 14400000
+      cache:
+        enabled: false
+        ttlSeconds: 43200
+      allowBruteForceOperations: false
+    schema:
+      type: "PHYSICAL"
+      properties:
+        importer.schemaName: "{{ timescale_audit_schema }}"
+        importer.useFullSchemaName: "true"
+        importer.useCatalogName: "false"
+      cacheDefaultStrategy: "CACHE"

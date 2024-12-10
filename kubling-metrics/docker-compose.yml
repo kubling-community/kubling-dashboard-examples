@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  kubling:
+    image: kubling/kubling-ce:latest
+    container_name: kubling
+    depends_on:
+      - timescaledb
+    ports:
+      - "8282:8282"
+      - "35432:35432"
+      - "35482:35482"
+    environment:
+      - ENABLE_WEB_CONSOLE=true
+      - SCRIPT_LOG_LEVEL=DEBUG
+      - APP_CONFIG=/app_data/app-config.yaml
+      - DESCRIPTOR_BUNDLE=/app_data/dashboard-descriptor-bundle.zip
+      - PROPS_FILE=/app_data/dashboard.properties
+      - KBL_SKIP_ENV_VAR_TEMP_FILE_ENCRYPTION=true
+    volumes:
+      - ./app-config.yaml:/app_data/app-config.yaml
+      - ./dashboard-descriptor-bundle.zip:/app_data/dashboard-descriptor-bundle.zip
+      - ./dashboard.properties:/app_data/dashboard.properties
+    networks:
+      - kubling_network
+
+  timescaledb:
+    image: timescale/timescaledb:2.17.2-pg16
+    container_name: timescaledb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "kubling_password"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ./db-init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - kubling_network
+
+  superset:
+    image: kubling/kubling-superset:latest
+    container_name: superset
+    depends_on:
+      - kubling
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_ENV: production
+      SUPERSET_SECRET_KEY: ${SECRET_KEY}
+    volumes:
+      - ./superset_home/superset.db:/app/superset_home/superset.db
+    networks:
+      - kubling_network
+
+networks:
+  kubling_network:
+    driver: bridge
+
+volumes:
+  timescale_data:
+    driver: local

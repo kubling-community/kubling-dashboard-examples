@@ -1,0 +1,124 @@
+---
+name: "{{ vdb_name }}"
+version: "{{ vdb_version }}"
+
+dataSources:
+  - name: "tsdb_metrics"
+    dataSourceType: "POSTGRESQL"
+    configObject:
+      dataSourceName: "tsdb-postgresql"
+      serverAddress: "{{ timescale_host }}"
+      serverPort: {{ timescale_port }}
+      databaseName: "{{ timescale_db }}"
+      userName: "{{ timescale_user }}"
+      token: "{{ timescale_password }}"
+      maxConnectionPoolSize: 5
+      minConnectionPoolSize: 1
+      maxConnectionIdleMilliseconds: 7200000
+      maxConnectionLifeTimeMilliseconds: 14400000
+      cache:
+        enabled: false
+        ttlSeconds: 43200
+      allowBruteForceOperations: false
+    schema:
+      type: "PHYSICAL"
+      properties:
+        importer.schemaName: "{{ timescale_metrics_schema }}"
+        importer.useFullSchemaName: "true"
+        importer.useCatalogName: "false"
+      cacheDefaultStrategy: "CACHE"
+
+  - name: kube_cluster_1
+    dataSourceType: KUBERNETES
+    properties:
+      cluster_name: kube_cluster_1
+    configObject:
+      configFile: /kubling_conf/kube_cluster_1.yaml
+      blankNamespaceStrategy: ALL
+      cache:
+        enabled: false
+        ttlSeconds: 43200
+    schema:
+      type: PHYSICAL
+      properties:
+        cluster_name: kube_cluster_1
+      cacheDefaultStrategy: CACHE
+      ddlFilePaths:
+        - /kubling_conf/k8s.ddl
+        - /kubling_conf/k8s_views.ddl
+
+  - name: kube_cluster_2
+    dataSourceType: KUBERNETES
+    properties:
+      cluster_name: kube_cluster_2
+    configObject:
+      configFile: /kubling_conf/kube_cluster_2.yaml
+      blankNamespaceStrategy: ALL
+      cache:
+        enabled: false
+        ttlSeconds: 43200
+    schema:
+      type: PHYSICAL
+      properties:
+        cluster_name: kube_cluster_2
+      cacheDefaultStrategy: CACHE
+      ddlFilePaths:
+        - /kubling_conf/k8s.ddl
+        - /kubling_conf/k8s_views.ddl
+
+aggregatorSchemaModels:
+  - name: k8s
+    schemas:
+      - kube_cluster_1
+      - kube_cluster_2
+    tables:
+      - name: API_SERVICE
+      - name: CERTIFICATE
+      - name: CONFIGMAP
+      - name: CRON_JOB
+      - name: CSI_DRIVER
+      - name: CSI_NODE
+      - name: CSI_STORAGE_CAPACITY
+      - name: CUSTOM_RESOURCE_DEFINITION
+      - name: DAEMONSET
+      - name: DEPLOYMENT
+      - name: DEPLOYMENT_CONDITIONS
+      - name: DEPLOYMENT_CONTAINER
+      - name: DEPLOYMENT_CONTAINER_VOLS
+      - name: ENDPOINT_SLICE
+      - name: EVENT
+      - name: FLOW_SCHEMA
+      - name: HORIZONTAL_POD_AUTOSCALER
+      - name: JOB
+      - name: LEASE
+      - name: LIMIT_RANGE
+      - name: MUTATING_WEBHOOK_CONFIGURATION
+      - name: NAMESPACE
+      - name: NETWORK_INGRESS
+      - name: NETWORK_POLICY
+      - name: NODE
+      - name: NODE_CONDITIONS
+      - name: PERSISTENT_VOLUME
+      - name: PERSISTENT_VOLUME_CLAIM
+      - name: POD
+      - name: POD_CONTAINER
+      - name: POD_CONTAINER_VOLS
+      - name: POD_DISRUPT_BUDGET
+      - name: POD_SCHEDULING_CONTEXT
+      - name: PRIORITY_CLASS
+      - name: PRIORITY_LEVEL_CONFIGURATION
+      - name: RBAC_CLUSTER_ROLE
+      - name: RBAC_CLUSTER_ROLE_BINDING
+      - name: RBAC_ROLE
+      - name: RBAC_ROLE_BINDING
+      - name: REPLICASET
+      - name: RESOURCE_CLAIM
+      - name: RESOURCE_CLASS
+      - name: SECRET
+      - name: SERVICE
+      - name: STATEFULSET
+      - name: STORAGE_CLASS
+      - name: VALIDATING_WEBHOOK_CONFIGURATION
+      - name: VOLUME_ATTACHMENT
+      - name: CURRENT_POD_CPU_REQ_TOTAL
+      - name: CURRENT_POD_MEM_REQ_TOTAL

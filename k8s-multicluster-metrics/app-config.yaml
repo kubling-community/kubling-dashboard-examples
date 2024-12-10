@@ -1,0 +1,18 @@
+transports:
+  nativeProtocol:
+    bindAddress: "0.0.0.0"
+    portNumber: 35482
+    secure: false
+  pgProtocol:
+    bindAddress: "0.0.0.0"
+    portNumber: 35432
+    secure: false
+vdb:
+  descriptorBundle: {{ DESCRIPTOR_BUNDLE }}
+
+propertiesFilePath: {{ PROPS_FILE }}
+
+# Deactivated to be able to restart containers
+buffer:
+  useDisk: false
+  encrypt: false
