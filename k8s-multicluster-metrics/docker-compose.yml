@@ -41,6 +41,23 @@ services:
     networks:
       - kubling_network
 
+  init-superset:
+    image: alpine:latest
+    container_name: init-superset
+    entrypoint: >
+      sh -c "
+      chown 1000:1000 /app/superset_home/superset.db &&
+      chmod 664 /app/superset_home/superset.db
+      "
+    volumes:
+      - ./superset_home/superset.db:/app/superset_home/superset.db
+    networks:
+      - kubling_network
+    depends_on:
+      - kubling
+    command: ""
+    restart: "no"
+
   superset:
     image: kubling/kubling-superset:latest
     container_name: superset
