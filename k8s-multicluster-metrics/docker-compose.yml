@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   kubling:
-    image: kubling/kubling-ce:latest
+    image: kubling/kubling:latest
     container_name: kubling
     depends_on:
       - timescaledb
