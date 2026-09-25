@@ -1,0 +1,169 @@
+table_name: k8s.ns.aggregation.overview
+main_dttm_col: null
+currency_code_column: null
+description: Active pods, deployments and effective requests by cluster and namespace.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT
+          n.clusterName,
+          n.metadata__name AS namespace,
+          COALESCE(d.total_deployments, 0) AS total_deployments,
+          COALESCE(p.active_pods, 0) AS active_pods,
+          COALESCE(p.total_cpu_requests_cores, 0) AS total_cpu_requests_cores,
+          COALESCE(p.total_memory_requests_gib, 0) AS total_memory_requests_gib
+      FROM k8s.NAMESPACE n
+      LEFT OUTER JOIN (
+          SELECT
+              requests.clusterName,
+              requests.namespace,
+              COUNT(DISTINCT requests.pod_identifier) AS active_pods,
+              SUM(
+                  CASE WHEN requests.app_cpu >= requests.init_cpu
+                       THEN requests.app_cpu ELSE requests.init_cpu END
+                  + requests.overhead_cpu
+              ) AS total_cpu_requests_cores,
+              SUM(
+                  CASE WHEN requests.app_memory >= requests.init_memory
+                       THEN requests.app_memory ELSE requests.init_memory END
+                  + requests.overhead_memory
+              ) / 1073741824 AS total_memory_requests_gib
+          FROM (
+  SELECT
+              p.identifier AS pod_identifier,
+              p.clusterName,
+              p.metadata__namespace AS namespace,
+              COALESCE(CAST(jsonJqAsString(p.spec__containers, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.cpu // "0") | cpu) | add // 0') AS double), 0) AS app_cpu,
+              COALESCE(CAST(jsonJqAsString(p.spec__initContainers, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.cpu // "0") | cpu) | max // 0') AS double), 0) AS init_cpu,
+              COALESCE(CAST(jsonJqAsString(p.spec__overhead, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.cpu // "0") | cpu') AS double), 0) AS overhead_cpu,
+              COALESCE(CAST(jsonJqAsString(p.spec__containers, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.memory // "0") | bytes) | add // 0') AS double), 0) AS app_memory,
+              COALESCE(CAST(jsonJqAsString(p.spec__initContainers, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.memory // "0") | bytes) | max // 0') AS double), 0) AS init_memory,
+              COALESCE(CAST(jsonJqAsString(p.spec__overhead, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.memory // "0") | bytes') AS double), 0) AS overhead_memory
+          FROM k8s.POD p
+          WHERE COALESCE(p.status__phase, '') NOT IN ('Succeeded', 'Failed')
+          ) requests
+          GROUP BY requests.clusterName, requests.namespace
+      ) p
+          ON p.clusterName = n.clusterName
+         AND p.namespace = n.metadata__name
+      LEFT OUTER JOIN (
+          SELECT
+              clusterName,
+              metadata__namespace AS namespace,
+              COUNT(DISTINCT identifier) AS total_deployments
+          FROM k8s.DEPLOYMENT
+          GROUP BY clusterName, metadata__namespace
+      ) d
+          ON d.clusterName = n.clusterName
+         AND d.namespace = n.metadata__name
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 3d1e781d-9748-40f6-9e85-2c7357166bae
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+  uuid: 0837f303-b344-4bcc-9e6e-71679874f60a
+columns:
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: e946347e-995d-41ce-ba0c-fb047eb43d71
+- column_name: namespace
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 0490238c-6141-4fba-81ca-ed598d25f371
+- column_name: total_deployments
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 86f1a3f7-6d42-4218-a945-db1af3aeb1ee
+- column_name: active_pods
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: b8bc9580-d5d6-5500-8825-d3f489834922
+- column_name: total_cpu_requests_cores
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 28b62892-5ad9-45a0-b869-92c91aa556de
+- column_name: total_memory_requests_gib
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: adc18a88-82bb-57c2-9892-9eef1372a7f1
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

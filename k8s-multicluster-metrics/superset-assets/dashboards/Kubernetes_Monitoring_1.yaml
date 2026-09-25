@@ -1,0 +1,453 @@
+dashboard_title: Kubernetes Monitoring
+description: null
+css: ''
+slug: null
+certified_by: ''
+certification_details: ''
+published: false
+uuid: 521534f6-64e4-44b4-be70-44c9c484071e
+position:
+  CHART-explore-1-1:
+    children: []
+    id: CHART-explore-1-1
+    meta:
+      chartId: 523140538
+      height: 50
+      sliceName: k8s.pod.memory.total.requested
+      uuid: 120f8ca1-23bd-4b61-9b53-31474916889a
+      width: 3
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-sdQERYa193q3mH61CY0ij
+    type: CHART
+  CHART-explore-10-1:
+    children: []
+    id: CHART-explore-10-1
+    meta:
+      chartId: 1970879651
+      height: 50
+      sliceName: k8s.hpa.overview
+      uuid: 82b4e3cd-fa9d-4e68-b7bb-c0ae85e5632b
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-XiWhVoVPBCrZkzCJXDkOt
+    type: CHART
+  CHART-explore-11-1:
+    children: []
+    id: CHART-explore-11-1
+    meta:
+      chartId: 2074343301
+      height: 50
+      sliceName: k8s.jobs.overview
+      uuid: f8b25788-bef4-4123-ba62-c243457ab21a
+      width: 7
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-FUruMXyQeCZZ5Iw0T3rc7
+    type: CHART
+  CHART-explore-14-1:
+    children: []
+    id: CHART-explore-14-1
+    meta:
+      chartId: 655673440
+      height: 50
+      sliceName: k8s.pod.issues
+      uuid: f406ac20-0dd7-4706-8e76-febeb2944db8
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-TRjZMTWqPLeMxuHf9S2ZE
+    type: CHART
+  CHART-explore-2-1:
+    children: []
+    id: CHART-explore-2-1
+    meta:
+      chartId: 193327445
+      height: 50
+      sliceName: k8s.pod.cpu.total.requested
+      uuid: 46403554-51bb-4511-9134-38fb702ec070
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-sdQERYa193q3mH61CY0ij
+    type: CHART
+  CHART-explore-3-1:
+    children: []
+    id: CHART-explore-3-1
+    meta:
+      chartId: 219304013
+      height: 50
+      sliceName: k8s.deploy.issues
+      uuid: d1de5a3e-cddb-4f5c-9f55-eecc8806633d
+      width: 6
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-LDs4gFLRC-L46-w_306Hd
+    type: CHART
+  CHART-explore-4-1:
+    children: []
+    id: CHART-explore-4-1
+    meta:
+      chartId: 1621569543
+      height: 54
+      sliceName: k8s.ns.aggregation.overview
+      uuid: 6809ec73-765b-4e58-b6f0-c373d9090c1a
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-wuEyBTPa-eTPIjLbXfSfm
+    type: CHART
+  CHART-explore-5-1:
+    children: []
+    id: CHART-explore-5-1
+    meta:
+      chartId: 188229256
+      height: 50
+      sliceName: k8s.node.overview
+      uuid: c0392cf6-08c6-4157-ad1d-31950c1b5642
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-86lLjStxErIQHsnmr6m1z
+    type: CHART
+  CHART-explore-6-1:
+    children: []
+    id: CHART-explore-6-1
+    meta:
+      chartId: 1176965122
+      height: 63
+      sliceName: k8s.error.events
+      uuid: 51c39d15-dd2f-4f3c-b59f-8e5c580dcda2
+      width: 12
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-0wy6eERvYu3x0Zm66H0Oz
+    type: CHART
+  CHART-explore-7-1:
+    children: []
+    id: CHART-explore-7-1
+    meta:
+      chartId: 2091226846
+      height: 50
+      sliceName: k8s.storage.pv.total
+      uuid: bc170346-12eb-41ea-a016-d5069012caea
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-sdQERYa193q3mH61CY0ij
+    type: CHART
+  CHART-explore-8-1:
+    children: []
+    id: CHART-explore-8-1
+    meta:
+      chartId: 394065453
+      height: 50
+      sliceName: k8s.storage.pvc.total
+      uuid: 683fe3d2-8742-4380-b487-8d654f65aec4
+      width: 2
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-sdQERYa193q3mH61CY0ij
+    type: CHART
+  CHART-explore-9-1:
+    children: []
+    id: CHART-explore-9-1
+    meta:
+      chartId: 1164592315
+      height: 50
+      sliceName: k8s.certs.overview
+      uuid: 9f8ebddb-e45d-4f90-9519-ebf48d4b3fa6
+      width: 6
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-LDs4gFLRC-L46-w_306Hd
+    type: CHART
+  DASHBOARD_VERSION_KEY: v2
+  GRID_ID:
+    children:
+    - ROW-sdQERYa193q3mH61CY0ij
+    - ROW-86lLjStxErIQHsnmr6m1z
+    - ROW-fh9Zv_8dOAYS_RvcUE7P7
+    - ROW-LDs4gFLRC-L46-w_306Hd
+    - ROW-wuEyBTPa-eTPIjLbXfSfm
+    - ROW-0wy6eERvYu3x0Zm66H0Oz
+    - ROW-XiWhVoVPBCrZkzCJXDkOt
+    - ROW-FUruMXyQeCZZ5Iw0T3rc7
+    id: GRID_ID
+    parents:
+    - ROOT_ID
+    type: GRID
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Kubernetes Monitoring
+    type: HEADER
+  ROOT_ID:
+    children:
+    - GRID_ID
+    id: ROOT_ID
+    type: ROOT
+  ROW-0wy6eERvYu3x0Zm66H0Oz:
+    children:
+    - CHART-explore-6-1
+    id: ROW-0wy6eERvYu3x0Zm66H0Oz
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-86lLjStxErIQHsnmr6m1z:
+    children:
+    - CHART-explore-5-1
+    id: ROW-86lLjStxErIQHsnmr6m1z
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-FUruMXyQeCZZ5Iw0T3rc7:
+    children:
+    - CHART-explore-11-1
+    id: ROW-FUruMXyQeCZZ5Iw0T3rc7
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-LDs4gFLRC-L46-w_306Hd:
+    children:
+    - CHART-explore-3-1
+    - CHART-explore-9-1
+    id: ROW-LDs4gFLRC-L46-w_306Hd
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-XiWhVoVPBCrZkzCJXDkOt:
+    children:
+    - CHART-explore-10-1
+    id: ROW-XiWhVoVPBCrZkzCJXDkOt
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-fh9Zv_8dOAYS_RvcUE7P7:
+    children:
+    - CHART-explore-14-1
+    id: ROW-fh9Zv_8dOAYS_RvcUE7P7
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-sdQERYa193q3mH61CY0ij:
+    children:
+    - CHART-explore-2-1
+    - CHART-explore-1-1
+    - CHART-explore-7-1
+    - CHART-explore-8-1
+    id: ROW-sdQERYa193q3mH61CY0ij
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-wuEyBTPa-eTPIjLbXfSfm:
+    children:
+    - CHART-explore-4-1
+    id: ROW-wuEyBTPa-eTPIjLbXfSfm
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+metadata:
+  chart_configuration:
+    '219304013':
+      id: 219304013
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 1621569543
+        - 188229256
+        - 1176965122
+        - 2091226846
+        - 394065453
+        - 1164592315
+        - 1970879651
+        - 2074343301
+        - 655673440
+    '1621569543':
+      id: 1621569543
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 219304013
+        - 188229256
+        - 1176965122
+        - 2091226846
+        - 394065453
+        - 1164592315
+        - 1970879651
+        - 2074343301
+        - 655673440
+    '188229256':
+      id: 188229256
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 219304013
+        - 1621569543
+        - 1176965122
+        - 2091226846
+        - 394065453
+        - 1164592315
+        - 1970879651
+        - 2074343301
+        - 655673440
+    '1176965122':
+      id: 1176965122
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 219304013
+        - 1621569543
+        - 188229256
+        - 2091226846
+        - 394065453
+        - 1164592315
+        - 1970879651
+        - 2074343301
+        - 655673440
+    '1164592315':
+      id: 1164592315
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 219304013
+        - 1621569543
+        - 188229256
+        - 1176965122
+        - 2091226846
+        - 394065453
+        - 1970879651
+        - 2074343301
+        - 655673440
+    '1970879651':
+      id: 1970879651
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 219304013
+        - 1621569543
+        - 188229256
+        - 1176965122
+        - 2091226846
+        - 394065453
+        - 1164592315
+        - 2074343301
+        - 655673440
+    '2074343301':
+      id: 2074343301
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 219304013
+        - 1621569543
+        - 188229256
+        - 1176965122
+        - 2091226846
+        - 394065453
+        - 1164592315
+        - 1970879651
+        - 655673440
+    '655673440':
+      id: 655673440
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 523140538
+        - 193327445
+        - 219304013
+        - 1621569543
+        - 188229256
+        - 1176965122
+        - 2091226846
+        - 394065453
+        - 1164592315
+        - 1970879651
+        - 2074343301
+  global_chart_configuration:
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded: []
+    chartsInScope:
+    - 523140538
+    - 193327445
+    - 219304013
+    - 1621569543
+    - 188229256
+    - 1176965122
+    - 2091226846
+    - 394065453
+    - 1164592315
+    - 1970879651
+    - 2074343301
+    - 655673440
+  color_scheme: ''
+  refresh_frequency: 30
+  color_scheme_domain: []
+  expanded_slices: {}
+  label_colors: {}
+  shared_label_colors: {}
+  timed_refresh_immune_slices: []
+  cross_filters_enabled: true
+  default_filters: '{}'
+  stagger_refresh: true
+theme_uuid: null
+version: 1.0.0
+tags: []

@@ -1,0 +1,202 @@
+table_name: k8s.hpa.overview
+main_dttm_col: null
+currency_code_column: null
+description: Current scaling targets and most recently changed HPA condition.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: "SELECT \n    hpa.clusterName,\n    hpa.metadata__namespace AS namespace,\n    hpa.metadata__name AS hpa_name,\n    hpa.spec__minReplicas as min_replicas,\n    hpa.spec__maxReplicas as max_replicas,\n    hpa.status__currentReplicas as current_replicas,\n    hpa.status__desiredReplicas as desired_replicas,\n    convert(latest_condition.latest_transition_time, timestamp) as latest_transition_time,\n    jsonPathAsString(\n        hpa.status__conditions, \n        '$[?(@.lastTransitionTime == \"' || latest_condition.latest_transition_time || '\")].type'\n    ) AS condition_type,\n    jsonPathAsString(\n        hpa.status__conditions, \n        '$[?(@.lastTransitionTime == \"' || latest_condition.latest_transition_time || '\")].status'\n    ) AS condition_status,\n    jsonPathAsString(\n        hpa.status__conditions, \n        '$[?(@.lastTransitionTime == \"' || latest_condition.latest_transition_time || '\")].message'\n    ) AS condition_message,\n    jsonPathAsString(\n        hpa.status__conditions, \n        '$[?(@.lastTransitionTime == \"' || latest_condition.latest_transition_time || '\")].reason'\n    ) AS condition_reason\nFROM k8s.HORIZONTAL_POD_AUTOSCALER hpa\nINNER JOIN (\n    SELECT \n        aa.clusterName,\n        aa.identifier, \n        jsonJqAsString(aa.status__conditions, 'max_by(.lastTransitionTime) | .lastTransitionTime') AS latest_transition_time\n    FROM k8s.HORIZONTAL_POD_AUTOSCALER aa\n) latest_condition\nON hpa.clusterName = latest_condition.clusterName\nAND hpa.identifier = latest_condition.identifier;\n"
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 0697465d-6b42-46f8-bd14-80ebaa2f7f9c
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+  uuid: 7108e3a4-7635-4680-9398-ef60ee981320
+columns:
+- column_name: condition_message
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: b088295d-21ff-4957-a730-fac00ad7a53a
+- column_name: current_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 6df941c6-f0a4-4280-af44-b3407934cf06
+- column_name: condition_status
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 210e0df3-b8bb-42ff-97f5-9ace84defad8
+- column_name: min_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: e8b53365-408c-41a7-8580-4ebdf8d896b7
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 415c3eeb-c710-4a59-a9eb-286b6cac373d
+- column_name: condition_type
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 4a0f37e5-e236-4b2a-adf5-a8e71825dcef
+- column_name: desired_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 71373872-634e-489b-aba5-bbba2c34bc60
+- column_name: condition_reason
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: a79e99bf-e605-4a74-8f6b-124a54fcedcf
+- column_name: namespace
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: ce4c9bef-fbfb-4ae0-bfe4-df482f395a2c
+- column_name: latest_transition_time
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIME
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 612cfa5e-6d2d-4887-a315-72f25f9b3e61
+- column_name: max_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 4153ae61-19c2-46e5-9fc3-26bd4afd4298
+- column_name: hpa_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 29de9777-db51-434e-9624-2362b3ed481e
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

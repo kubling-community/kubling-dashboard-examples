@@ -1,0 +1,41 @@
+slice_name: k8s.node.overview
+description: null
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  datasource: 5__table
+  viz_type: table
+  query_mode: raw
+  groupby: []
+  time_grain_sqla: null
+  temporal_columns_lookup: {}
+  all_columns:
+  - clusterName
+  - node_name
+  - readiness
+  - total_cpu_capacity_cores
+  - allocatable_cpu_cores
+  - total_memory_capacity_gib
+  - allocatable_memory_gib
+  percent_metrics: []
+  adhoc_filters: []
+  order_by_cols: []
+  row_limit: 1000
+  server_page_length: 10
+  order_desc: true
+  table_timestamp_format: smart_date
+  allow_render_html: false
+  show_cell_bars: true
+  color_pn: true
+  comparison_color_scheme: Green
+  comparison_type: values
+  extra_form_data: {}
+  dashboards:
+  - 1
+query_context: '{"datasource":{"id":5,"type":"table"},"force":false,"queries":[{"filters":[],"extras":{"having":"","where":""},"applied_time_extras":{},"columns":["clusterName","node_name","readiness","total_cpu_capacity_cores","allocatable_cpu_cores","total_memory_capacity_gib","allocatable_memory_gib"],"orderby":[],"annotation_layers":[],"row_limit":1000,"series_limit":0,"order_desc":true,"url_params":{},"custom_params":{},"custom_form_data":{},"post_processing":[],"time_offsets":[]}],"form_data":{"datasource":"5__table","viz_type":"table","query_mode":"raw","groupby":[],"time_grain_sqla":null,"temporal_columns_lookup":{},"all_columns":["clusterName","node_name","readiness","total_cpu_capacity_cores","allocatable_cpu_cores","total_memory_capacity_gib","allocatable_memory_gib"],"percent_metrics":[],"adhoc_filters":[],"order_by_cols":[],"row_limit":1000,"server_page_length":10,"order_desc":true,"table_timestamp_format":"smart_date","allow_render_html":false,"show_cell_bars":true,"color_pn":true,"comparison_color_scheme":"Green","comparison_type":"values","extra_form_data":{},"dashboards":[1],"force":false,"result_format":"json","result_type":"full","include_time":false},"result_format":"json","result_type":"full"}'
+cache_timeout: null
+uuid: c0392cf6-08c6-4157-ad1d-31950c1b5642
+version: 1.0.0
+dataset_uuid: a4fed29f-dd17-4f6e-b8b1-4b6cf5ed6392
+tags: []

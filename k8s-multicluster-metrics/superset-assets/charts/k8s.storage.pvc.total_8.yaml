@@ -1,0 +1,48 @@
+slice_name: k8s.storage.pvc.total
+description: null
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  datasource: 8__table
+  viz_type: big_number_total
+  metric:
+    expressionType: SIMPLE
+    column:
+      advanced_data_type: null
+      certification_details: null
+      certified_by: null
+      column_name: total_pvc_capacity_gib
+      description: null
+      expression: null
+      filterable: true
+      groupby: true
+      id: 31
+      is_certified: false
+      is_dttm: false
+      python_date_format: null
+      type: null
+      type_generic: null
+      verbose_name: null
+      warning_markdown: null
+    aggregate: MAX
+    sqlExpression: null
+    datasourceWarning: false
+    hasCustomLabel: false
+    label: MAX(total_pvc_capacity_gib)
+    optionName: metric_lteq18aab8s_hgixs0zfm8
+  adhoc_filters: []
+  subheader: GiB claimed
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  y_axis_format: SMART_NUMBER
+  time_format: smart_date
+  extra_form_data: {}
+  dashboards:
+  - 1
+query_context: '{"datasource":{"id":8,"type":"table"},"force":false,"queries":[{"filters":[],"extras":{"having":"","where":""},"applied_time_extras":{},"columns":[],"metrics":[{"expressionType":"SIMPLE","column":{"advanced_data_type":null,"certification_details":null,"certified_by":null,"column_name":"total_pvc_capacity_gib","description":null,"expression":null,"filterable":true,"groupby":true,"id":31,"is_certified":false,"is_dttm":false,"python_date_format":null,"type":null,"type_generic":null,"verbose_name":null,"warning_markdown":null},"aggregate":"MAX","sqlExpression":null,"datasourceWarning":false,"hasCustomLabel":false,"label":"MAX(total_pvc_capacity_gib)","optionName":"metric_lteq18aab8s_hgixs0zfm8"}],"annotation_layers":[],"series_limit":0,"order_desc":true,"url_params":{},"custom_params":{},"custom_form_data":{}}],"form_data":{"datasource":"8__table","viz_type":"big_number_total","metric":{"expressionType":"SIMPLE","column":{"advanced_data_type":null,"certification_details":null,"certified_by":null,"column_name":"total_pvc_capacity_gib","description":null,"expression":null,"filterable":true,"groupby":true,"id":31,"is_certified":false,"is_dttm":false,"python_date_format":null,"type":null,"type_generic":null,"verbose_name":null,"warning_markdown":null},"aggregate":"MAX","sqlExpression":null,"datasourceWarning":false,"hasCustomLabel":false,"label":"MAX(total_pvc_capacity_gib)","optionName":"metric_lteq18aab8s_hgixs0zfm8"},"adhoc_filters":[],"subheader":"GB Claimed","header_font_size":0.4,"subheader_font_size":0.15,"y_axis_format":"SMART_NUMBER","time_format":"smart_date","extra_form_data":{},"dashboards":[1],"force":false,"result_format":"json","result_type":"full"},"result_format":"json","result_type":"full"}'
+cache_timeout: null
+uuid: 683fe3d2-8742-4380-b487-8d654f65aec4
+version: 1.0.0
+dataset_uuid: 9235b6ef-326c-43a7-9d54-76769f3c846e
+tags: []

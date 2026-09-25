@@ -1,0 +1,126 @@
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubling-sample
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubling-fixture
+  namespace: kubling-sample
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-api
+  namespace: kubling-sample
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: sample-api
+  template:
+    metadata:
+      labels:
+        app: sample-api
+    spec:
+      containers:
+        - name: api
+          image: registry.k8s.io/pause:3.10
+          resources:
+            requests:
+              cpu: 125m
+              memory: 64Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-pending
+  namespace: kubling-sample
+spec:
+  serviceAccountName: kubling-fixture
+  nodeSelector:
+    fixture: unavailable
+  initContainers:
+    - name: prepare
+      image: registry.k8s.io/pause:3.10
+      resources:
+        requests:
+          cpu: 500m
+          memory: 256Mi
+  containers:
+    - name: api
+      image: registry.k8s.io/pause:3.10
+      resources:
+        requests:
+          cpu: 250m
+          memory: 128Mi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sample-job
+  namespace: kubling-sample
+spec:
+  suspend: true
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: job
+          image: registry.k8s.io/pause:3.10
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sample-api
+  namespace: kubling-sample
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sample-api
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sample-credentials
+  namespace: kubling-sample
+type: Opaque
+stringData:
+  username: demo
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sample-volume
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /tmp/kubling-sample
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sample-volume
+  namespace: kubling-sample
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: sample-volume
