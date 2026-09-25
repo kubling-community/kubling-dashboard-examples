@@ -1,3 +1,11 @@
 /.idea/
 /kubling-dashboard-examples.iml
 **/*.zip
+# Local build inputs
+.build/
+# Local credentials
+**/.env
+# Generated Python and local Superset state
+**/__pycache__/
+**/*.py[cod]
+**/superset_home/*.db

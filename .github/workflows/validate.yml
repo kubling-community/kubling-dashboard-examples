@@ -1,0 +1,54 @@
+name: Validate examples
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Validate repository structure
+        run: python -B tools/check_repository.py
+
+      - name: Compile Python utilities
+        run: python -B -m compileall -q scripts tools superset
+
+      - name: Check shell scripts
+        run: shellcheck scripts/*.sh */*.sh
+
+      - name: Verify deterministic Superset assets
+        run: |
+          first="$(mktemp -d)"
+          second="$(mktemp -d)"
+          python scripts/package-superset-assets.py --output-directory "$first"
+          python scripts/package-superset-assets.py --output-directory "$second"
+          diff \
+            <(cd "$first" && sha256sum *.zip) \
+            <(cd "$second" && sha256sum *.zip)
+
+      - name: Validate Compose files
+        env:
+          EXAMPLE_NAME: ci
+          KUBLING_IMAGE: example.invalid/kubling:ci
+          KUBLING_DESCRIPTOR_BUNDLE: /tmp/dashboard-descriptor-bundle.zip
+          KUBLING_PROPERTIES_FILE: /tmp/dashboard.properties
+          SUPERSET_SECRET_KEY: ci-secret-key
+          SUPERSET_ADMIN_PASSWORD: ci-admin-password
+          TIMESCALE_PASSWORD: ci-timescale-password
+        run: |
+          docker compose --file kubling-metrics/docker-compose.yml config --quiet
+          docker compose --file k8s-multicluster-metrics/docker-compose.yml config --quiet
