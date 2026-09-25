@@ -1,0 +1,202 @@
+table_name: k8s.deploy.issues
+main_dttm_col: null
+currency_code_column: null
+description: Deployments that are unavailable, partially degraded or failing to progress.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT
+          d.clusterName,
+          d.metadata__namespace AS namespace,
+          d.metadata__name AS deployment_name,
+          COALESCE(d.spec__replicas, 1) AS desired_replicas,
+          COALESCE(d.status__updatedReplicas, 0) AS updated_replicas,
+          COALESCE(d.status__availableReplicas, 0) AS available_replicas,
+          COALESCE(d.status__unavailableReplicas, 0) AS unavailable_replicas,
+          jsonPathAsString(problem.condition_data, '$.type') AS condition_type,
+          jsonPathAsString(problem.condition_data, '$.reason') AS condition_reason,
+          jsonPathAsString(problem.condition_data, '$.message') AS condition_message
+      FROM k8s.DEPLOYMENT d
+      LEFT OUTER JOIN (
+          SELECT
+              clusterName,
+              identifier,
+              jsonJqAsString(
+                  status__conditions,
+                  '(. // []) | map(select((.type == "Progressing" and .status == "False") or (.type == "ReplicaFailure" and .status == "True"))) | sort_by(.lastTransitionTime) | last // null'
+              ) AS condition_data
+          FROM k8s.DEPLOYMENT
+      ) problem ON problem.clusterName = d.clusterName
+               AND problem.identifier = d.identifier
+      WHERE COALESCE(d.spec__replicas, 1) > 0
+        AND (
+            COALESCE(d.status__availableReplicas, 0) < COALESCE(d.spec__replicas, 1)
+            OR COALESCE(d.status__unavailableReplicas, 0) > 0
+            OR problem.condition_data IS NOT NULL
+        )
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 576f9d91-5a80-4949-bd18-576f8f0cb66b
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+  uuid: 8b94cf64-7798-4398-9cb2-e7220e5635b5
+columns:
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 564c84ce-36c5-44c8-a020-e1b3ad12867d
+- column_name: namespace
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 7f9931f6-933b-4d2e-8b26-c2fca560e3e4
+- column_name: deployment_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 4dc03a36-0121-4d54-b297-6d99ca7fd061
+- column_name: desired_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 2fbd9acf-304c-5ab1-a4e1-082c8c8c981a
+- column_name: updated_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 3f39a82f-d05a-51ba-9fac-0b5f89cb3d6d
+- column_name: available_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 0f351061-8118-52c3-be35-9ac4b6fed3a9
+- column_name: unavailable_replicas
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 586e5aa8-e6d3-5e44-8042-3a9c595a722f
+- column_name: condition_type
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 3e636291-427e-5cb2-9338-a5150d7ffc64
+- column_name: condition_reason
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 668f1795-6dab-55e6-a795-31333088fa45
+- column_name: condition_message
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: d42da70d-ef97-5874-b8ce-29268fd14b2f
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

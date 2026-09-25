@@ -1,0 +1,25 @@
+
+kubeconfig: /kubeconfig/provider.yaml
+namespace: kube_cluster_2
+namespaceColumn:
+  enabled: true
+  name: clusterName
+  includeInStableKeys: true
+requestTimeout: 30s
+qps: 50
+burst: 100
+blankNamespaceStrategy: ALL
+schema:
+  fieldExpansionDepth: 2
+  includeObject: false
+  include:
+    - v1/namespaces
+    - v1/nodes
+    - v1/persistentvolumeclaims
+    - v1/persistentvolumes
+    - v1/pods
+    - v1/secrets
+    - apps/v1/deployments
+    - autoscaling/v2/horizontalpodautoscalers
+    - batch/v1/jobs
+    - events.k8s.io/v1/events

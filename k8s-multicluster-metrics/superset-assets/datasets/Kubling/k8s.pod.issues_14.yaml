@@ -1,0 +1,246 @@
+table_name: k8s.pod.issues
+main_dttm_col: null
+currency_code_column: null
+description: Pending, failed, unknown or non-ready running pods.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT
+          p.clusterName,
+          p.metadata__namespace AS namespace,
+          p.metadata__name AS pod_name,
+          COALESCE(p.status__phase, 'Unknown') AS pod_phase,
+          p.status__reason AS pod_reason,
+          p.status__message AS pod_message,
+          jsonPathAsString(problem.condition_data, '$.type') AS condition_type,
+          jsonPathAsString(problem.condition_data, '$.reason') AS condition_reason,
+          jsonPathAsString(problem.condition_data, '$.message') AS condition_message,
+          jsonPathAsString(problem.condition_data, '$.lastTransitionTime') AS condition_last_transition_time,
+          jsonJqAsString(p.status__containerStatuses, '(. // []) | map(.state.waiting.reason // .state.terminated.reason // empty) | unique | join(", ")') AS container_reasons,
+          jsonJqAsString(p.status__initContainerStatuses, '(. // []) | map(.state.waiting.reason // .state.terminated.reason // empty) | unique | join(", ")') AS init_container_reasons,
+          jsonJqAsString(p.status__ephemeralContainerStatuses, '(. // []) | map(.state.waiting.reason // .state.terminated.reason // empty) | unique | join(", ")') AS ephemeral_container_reasons
+      FROM k8s.POD p
+      LEFT OUTER JOIN (
+          SELECT
+              clusterName,
+              identifier,
+              jsonJqAsString(
+                  status__conditions,
+                  '(. // []) | map(select((.type == "Ready" or .type == "ContainersReady" or .type == "PodScheduled") and .status == "False")) | sort_by(.lastTransitionTime) | last // null'
+              ) AS condition_data
+          FROM k8s.POD
+      ) problem ON problem.clusterName = p.clusterName
+               AND problem.identifier = p.identifier
+      WHERE COALESCE(p.status__phase, 'Unknown') IN ('Pending', 'Failed', 'Unknown')
+         OR (
+             p.status__phase = 'Running'
+             AND problem.condition_data IS NOT NULL
+         )
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 87424727-8bb2-4a2d-983f-e33179fbd8a3
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+  uuid: 174fb993-13e1-4a8b-8739-68ec042ce74d
+columns:
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: cef75122-80f6-468a-9612-823770294ecf
+- column_name: namespace
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 1b2c610b-1ef9-4ef5-ad3a-458070312eb3
+- column_name: pod_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: bb779d06-88c9-4abd-ac01-48f8bfb14472
+- column_name: pod_phase
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 7b913971-a280-439f-a137-08929a28ed1a
+- column_name: pod_reason
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 2b8f0c9a-c334-5905-9098-407c93a705f8
+- column_name: pod_message
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: cd85d333-8b51-53de-a0ad-90a7964e16de
+- column_name: condition_type
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 4efb6f3c-f049-58a5-91f0-4c9bfdfee960
+- column_name: condition_reason
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 69e0dbbe-12e6-5af2-81b8-0e59ae7b54d4
+- column_name: condition_message
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: d8bcff9f-7807-507b-ac75-77de09e47ca2
+- column_name: condition_last_transition_time
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 9fd78bf0-6f27-577c-8fcf-a1fb1401d411
+- column_name: container_reasons
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 94de8e70-f0ac-50c6-8759-ede7bac3bce0
+- column_name: init_container_reasons
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: db666172-369b-579f-97a6-ab7a4c1a3af0
+- column_name: ephemeral_container_reasons
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 5084a89a-9d48-52af-a4ed-4d55e0bc7bf1
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

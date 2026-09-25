@@ -1,0 +1,129 @@
+table_name: k8s.certs.overview
+main_dttm_col: null
+currency_code_column: null
+description: TLS certificates and certificates expiring within ten days.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT
+          cert.clusterName,
+          cert.namespace,
+          cert.secret_name,
+          jsonPretty(cert.cert_info) AS cert_info,
+          CASE
+              WHEN jsonPathAsString(cert.cert_info, '$[?(@.expirationDays <= 10)]') IS NOT NULL
+                  THEN 'YES'
+              ELSE 'NO'
+          END AS any_about_to_expire
+      FROM (
+          SELECT
+              secret.clusterName,
+              secret.metadata__namespace AS namespace,
+              secret.metadata__name AS secret_name,
+              x509_cert_exp_days(
+                  CAST(
+                      to_chars(
+                          to_bytes(jsonPathAsString(secret.data, '$.["tls.crt"]'), 'base64'),
+                          'UTF-8'
+                      ) AS string
+                  )
+              ) AS cert_info
+          FROM k8s.SECRET secret
+          WHERE secret.type = 'kubernetes.io/tls'
+      ) cert
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 4e89c2a6-97f9-4ff2-9905-9e58b5801496
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+  uuid: 51cfc332-177b-4f9f-abf8-d26c541fbc3a
+columns:
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: cbd4398d-fe85-4d8a-9a88-ef32dec2bab4
+- column_name: namespace
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 716d07f3-b194-4ee2-92f4-94e3e9efeb48
+- column_name: secret_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: cabc2d8e-dbb9-4008-91be-be00dc692ffd
+- column_name: cert_info
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 66a7e805-e7e5-4334-ae8d-76ad2d5211aa
+- column_name: any_about_to_expire
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 5dc915e1-f25e-434e-89a9-8a636ccaa827
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

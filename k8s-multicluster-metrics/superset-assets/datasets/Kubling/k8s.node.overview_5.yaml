@@ -1,0 +1,160 @@
+table_name: k8s.node.overview
+main_dttm_col: null
+currency_code_column: null
+description: Node readiness, capacity and allocatable resources for each cluster.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT
+          n.clusterName,
+          n.metadata__name AS node_name,
+          CAST(jsonJqAsString(n.status__capacity, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.cpu // "0") | cpu') AS double) AS total_cpu_capacity_cores,
+          CAST(jsonJqAsString(n.status__allocatable, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.cpu // "0") | cpu') AS double) AS allocatable_cpu_cores,
+          CAST(jsonJqAsString(n.status__capacity, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.memory // "0") | bytes') AS double) / 1073741824 AS total_memory_capacity_gib,
+          CAST(jsonJqAsString(n.status__allocatable, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.memory // "0") | bytes') AS double) / 1073741824 AS allocatable_memory_gib,
+          jsonJqAsString(n.status__conditions, '(. // []) | map(select(.type == "Ready")) | first | .status // "Unknown"') AS node_status,
+          CASE
+              WHEN jsonJqAsString(n.status__conditions, '(. // []) | map(select(.type == "Ready")) | first | .status // "Unknown"') = 'True'
+                  THEN 'Ready'
+              ELSE 'Not Ready'
+          END AS readiness
+      FROM k8s.NODE n
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: a4fed29f-dd17-4f6e-b8b1-4b6cf5ed6392
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+  uuid: 22806b07-79f7-409d-af8e-7acc9caae8c5
+columns:
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 4d3d02cd-dcbc-4824-b8c4-2d18e93619b1
+- column_name: node_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 005864e8-32b7-465b-92e4-1cacc51f48f8
+- column_name: readiness
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: f3c16507-b022-4087-9dcc-fa1e7281495e
+- column_name: node_status
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: acad9cd3-9566-438c-ab79-6222d3001815
+- column_name: total_cpu_capacity_cores
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 58d7e8e8-9028-4c84-ad6e-6f7feb9e98cd
+- column_name: allocatable_cpu_cores
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: b95b7718-0586-558a-b3a2-606013e8d7c4
+- column_name: total_memory_capacity_gib
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 5fd75c00-dc23-587f-9ac3-d34e299dd210
+- column_name: allocatable_memory_gib
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 02623f80-73d1-5ca3-91fc-bc23eb322a10
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

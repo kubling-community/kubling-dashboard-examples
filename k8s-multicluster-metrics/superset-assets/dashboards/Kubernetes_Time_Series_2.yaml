@@ -1,0 +1,102 @@
+dashboard_title: Kubernetes Time Series
+description: null
+css: ''
+slug: null
+certified_by: ''
+certification_details: ''
+published: false
+uuid: 40ad8d01-2e6a-4712-a0c4-7d7db53481a0
+position:
+  CHART-explore-12-1:
+    children: []
+    id: CHART-explore-12-1
+    meta:
+      chartId: 916995171
+      height: 50
+      sliceName: k8s.pod.cpu.total.requested.history
+      uuid: 8a58cd64-7c42-4d3c-ab51-28a09c364b02
+      width: 6
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-Pof4Jsnms0lM7dq3Gp5I9
+    type: CHART
+  CHART-explore-13-1:
+    children: []
+    id: CHART-explore-13-1
+    meta:
+      chartId: 32731820
+      height: 50
+      sliceName: k8s.pod.mem.total.requested.history
+      uuid: 68b6665c-74ef-49ac-b4b7-cda87f137dbd
+      width: 6
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-Pof4Jsnms0lM7dq3Gp5I9
+    type: CHART
+  DASHBOARD_VERSION_KEY: v2
+  GRID_ID:
+    children:
+    - ROW-Pof4Jsnms0lM7dq3Gp5I9
+    id: GRID_ID
+    parents:
+    - ROOT_ID
+    type: GRID
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Kubernetes Time Series
+    type: HEADER
+  ROOT_ID:
+    children:
+    - GRID_ID
+    id: ROOT_ID
+    type: ROOT
+  ROW-Pof4Jsnms0lM7dq3Gp5I9:
+    children:
+    - CHART-explore-12-1
+    - CHART-explore-13-1
+    id: ROW-Pof4Jsnms0lM7dq3Gp5I9
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+metadata:
+  chart_configuration:
+    '916995171':
+      id: 916995171
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 32731820
+    '32731820':
+      id: 32731820
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 916995171
+  global_chart_configuration:
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded: []
+    chartsInScope:
+    - 916995171
+    - 32731820
+  color_scheme: ''
+  refresh_frequency: 30
+  color_scheme_domain: []
+  expanded_slices: {}
+  label_colors: {}
+  shared_label_colors:
+    MAX(_value): '#1FA8C9'
+  timed_refresh_immune_slices: []
+  cross_filters_enabled: true
+  default_filters: '{}'
+theme_uuid: null
+version: 1.0.0
+tags: []

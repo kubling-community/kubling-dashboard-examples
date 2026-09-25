@@ -1,0 +1,77 @@
+table_name: kubling.engine.sql.threads.active
+main_dttm_col: _time
+currency_code_column: null
+description: null
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: 'SELECT * from tsdb_metrics."kbl_metrics.historical" WHERE _name = ''kubling.engine.sql.threads.active''
+
+  ORDER by "_time" ASC'
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: cb1fb41c-ec74-4fdc-a2f0-53f42ab14e36
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+  uuid: b4ddb061-c1ef-4dbd-b29b-8648b68940c7
+columns:
+- column_name: _time
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIME
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 892b4366-33c0-4593-b7c2-029d8565640d
+- column_name: _value
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 8ce7e9a4-28f1-45c2-aae7-18e046636c57
+- column_name: _name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 85b39d31-2776-41a8-9e83-da1a33473f6e
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

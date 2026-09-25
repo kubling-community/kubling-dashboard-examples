@@ -1,4 +1,5 @@
-#!/bin/bash
-sh gen-bundles.sh
-unzip -o ./superset_home/superset.zip superset.db -d ./superset_home
-SECRET_KEY="WMq6YJfpeYEytXEs8P2NN8sX/awDASKfx6wGBDUi+YRbIfQqhYaQM5lD" docker compose up
+#!/usr/bin/env bash
+set -euo pipefail
+
+example_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+exec "$example_dir/../scripts/run-example.sh" "k8s-multicluster-metrics"

@@ -1,0 +1,126 @@
+table_name: k8s.jobs.overview
+main_dttm_col: null
+currency_code_column: null
+description: Job counts by cluster and namespace, including active, succeeded and failed-pod states.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT
+          j.clusterName,
+          j.metadata__namespace AS namespace,
+          COUNT(DISTINCT j.identifier) AS total_jobs_count,
+          SUM(CASE WHEN COALESCE(j.status__failed, 0) > 0 THEN 1 ELSE 0 END) AS jobs_with_failed_pods,
+          SUM(CASE WHEN COALESCE(j.status__active, 0) > 0 THEN 1 ELSE 0 END) AS running_jobs_count,
+          SUM(CASE WHEN COALESCE(j.status__succeeded, 0) > 0 AND COALESCE(j.status__active, 0) = 0 THEN 1 ELSE 0 END) AS succeeded_jobs_count
+      FROM k8s.JOB j
+      GROUP BY j.clusterName, j.metadata__namespace
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: bd729890-6e5a-4822-b371-0ab86403dcc9
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+  uuid: 658b5b0d-a95f-4925-ab8b-356911f96550
+columns:
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 7680019b-c32f-4ba1-9aaf-1a66c747a702
+- column_name: namespace
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: c675cc6b-b522-5f9e-97e3-62c0b2b9853f
+- column_name: total_jobs_count
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: cedadb0d-2efd-4af6-8620-efba313d06db
+- column_name: jobs_with_failed_pods
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: e70d2550-ae65-565b-8c08-5d2e2f88bc20
+- column_name: running_jobs_count
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 8c843262-9da7-419f-a2d0-f079d4a19a42
+- column_name: succeeded_jobs_count
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 47a4710c-1c94-5dc9-ab4a-33346ade143f
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

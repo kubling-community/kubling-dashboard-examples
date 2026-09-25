@@ -1,0 +1,51 @@
+table_name: k8s.storage.pv.total
+main_dttm_col: null
+currency_code_column: null
+description: Provisioned persistent-volume capacity across all clusters, in GiB.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT COALESCE(SUM(
+          CAST(jsonJqAsString(pv.spec__capacity, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.memory // "0") | bytes') AS double)
+      ), 0) / 1073741824 AS total_pv_capacity_gib
+      FROM k8s.PERSISTENT_VOLUME pv
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: dbaee3de-1463-4690-9367-b7fad6374137
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+  uuid: 8400cda1-7ea2-4ccf-a94b-8ff4ff28bbf3
+columns:
+- column_name: total_pv_capacity_gib
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 75ee0ff1-47da-51db-974a-9ce75e84f602
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

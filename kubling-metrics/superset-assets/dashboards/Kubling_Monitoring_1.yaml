@@ -1,0 +1,280 @@
+dashboard_title: Kubling Monitoring
+description: null
+css: "#toast-presenter {\n    display: none;\n    visibility: hidden;\n}"
+slug: null
+certified_by: ''
+certification_details: ''
+published: false
+uuid: 388acf15-07a3-47b4-84c9-7de51fdcf24e
+position:
+  CHART-explore-1-1:
+    children: []
+    id: CHART-explore-1-1
+    meta:
+      chartId: 1998062442
+      height: 50
+      sliceName: kubling.engine.sql.sessions.active
+      uuid: e9387208-7a4e-405b-9d2d-924509c04d1f
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-JnT7IttGpMcptrrNzo4pT
+    type: CHART
+  CHART-explore-2-1:
+    children: []
+    id: CHART-explore-2-1
+    meta:
+      chartId: 1930436050
+      height: 50
+      sliceName: kubling.login.error
+      uuid: 70ca9651-38e0-4067-9eab-d0de4be2c7e6
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-JnT7IttGpMcptrrNzo4pT
+    type: CHART
+  CHART-explore-3-1:
+    children: []
+    id: CHART-explore-3-1
+    meta:
+      chartId: 534016058
+      height: 50
+      sliceName: kubling.login.total
+      uuid: c4b0db82-4fec-4120-8477-70f9b1adada5
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-JnT7IttGpMcptrrNzo4pT
+    type: CHART
+  CHART-explore-4-1:
+    children: []
+    id: CHART-explore-4-1
+    meta:
+      chartId: 325097825
+      height: 50
+      sliceName: kubling.engine.sql.plan.active
+      uuid: ae114b41-56f6-4376-a01e-02ad06c12c16
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-zll5wDHlhHSCc2dN7qHjo
+    type: CHART
+  CHART-explore-5-1:
+    children: []
+    id: CHART-explore-5-1
+    meta:
+      chartId: 2135410104
+      height: 50
+      sliceName: kubling.engine.sql.threads.active
+      uuid: 6ee0f4dd-8d20-4063-a4aa-8d510a6a0294
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-zll5wDHlhHSCc2dN7qHjo
+    type: CHART
+  CHART-explore-6-1:
+    children: []
+    id: CHART-explore-6-1
+    meta:
+      chartId: 1163502875
+      height: 50
+      sliceName: kubling.cache.entries.current
+      uuid: d1e8cd5f-4646-4cc7-8f2f-a97d7e9ab3fa
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-zll5wDHlhHSCc2dN7qHjo
+    type: CHART
+  CHART-explore-7-1:
+    children: []
+    id: CHART-explore-7-1
+    meta:
+      chartId: 693179898
+      height: 50
+      sliceName: kubling.cache.mem.usage
+      uuid: 47212663-a5f1-4072-afe1-1ea3f8c0a3c5
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-6SOar5HpHjmgW8As7uMa2
+    type: CHART
+  CHART-explore-9-1:
+    children: []
+    id: CHART-explore-9-1
+    meta:
+      chartId: 1549289675
+      height: 50
+      sliceName: kubling.js.threads.active
+      uuid: d4239bf0-ae9e-4a6b-9e25-0384c4783880
+      width: 4
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-Rv5dLw-ZXTuXiTKtMwfPl
+    type: CHART
+  DASHBOARD_VERSION_KEY: v2
+  GRID_ID:
+    children:
+    - ROW-JnT7IttGpMcptrrNzo4pT
+    - ROW-zll5wDHlhHSCc2dN7qHjo
+    - ROW-6SOar5HpHjmgW8As7uMa2
+    id: GRID_ID
+    parents:
+    - ROOT_ID
+    type: GRID
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Kubling Monitoring
+    type: HEADER
+  ROOT_ID:
+    children:
+    - GRID_ID
+    id: ROOT_ID
+    type: ROOT
+  ROW-6SOar5HpHjmgW8As7uMa2:
+    children:
+    - CHART-explore-7-1
+    - CHART-explore-9-1
+    id: ROW-6SOar5HpHjmgW8As7uMa2
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-JnT7IttGpMcptrrNzo4pT:
+    children:
+    - CHART-explore-1-1
+    - CHART-explore-2-1
+    - CHART-explore-3-1
+    id: ROW-JnT7IttGpMcptrrNzo4pT
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+  ROW-zll5wDHlhHSCc2dN7qHjo:
+    children:
+    - CHART-explore-4-1
+    - CHART-explore-5-1
+    - CHART-explore-6-1
+    id: ROW-zll5wDHlhHSCc2dN7qHjo
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    type: ROW
+metadata:
+  chart_configuration:
+    '1998062442':
+      id: 1998062442
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1930436050
+        - 534016058
+        - 325097825
+        - 2135410104
+        - 1163502875
+        - 693179898
+        - 1549289675
+    '325097825':
+      id: 325097825
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1998062442
+        - 1930436050
+        - 534016058
+        - 2135410104
+        - 1163502875
+        - 693179898
+        - 1549289675
+    '2135410104':
+      id: 2135410104
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1998062442
+        - 1930436050
+        - 534016058
+        - 325097825
+        - 1163502875
+        - 693179898
+        - 1549289675
+    '1163502875':
+      id: 1163502875
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1998062442
+        - 1930436050
+        - 534016058
+        - 325097825
+        - 2135410104
+        - 693179898
+        - 1549289675
+    '693179898':
+      id: 693179898
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1998062442
+        - 1930436050
+        - 534016058
+        - 325097825
+        - 2135410104
+        - 1163502875
+        - 1549289675
+    '1549289675':
+      id: 1549289675
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1998062442
+        - 1930436050
+        - 534016058
+        - 325097825
+        - 2135410104
+        - 1163502875
+        - 693179898
+  global_chart_configuration:
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded: []
+    chartsInScope:
+    - 1998062442
+    - 1930436050
+    - 534016058
+    - 325097825
+    - 2135410104
+    - 1163502875
+    - 693179898
+    - 1549289675
+  color_scheme: ''
+  refresh_frequency: 0
+  color_scheme_domain: []
+  expanded_slices: {}
+  label_colors: {}
+  shared_label_colors:
+    MAX(_value): '#1FA8C9'
+  timed_refresh_immune_slices: []
+  cross_filters_enabled: true
+  default_filters: '{}'
+theme_uuid: null
+version: 1.0.0
+tags: []

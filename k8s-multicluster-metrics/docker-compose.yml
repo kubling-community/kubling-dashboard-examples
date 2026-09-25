@@ -1,82 +1,188 @@
-version: '3.8'
 
 services:
-  kubling:
-    image: kubling/kubling:latest
-    container_name: kubling
-    depends_on:
-      - timescaledb
-    ports:
-      - "8282:8282"
-      - "35432:35432"
-      - "35482:35482"
-    environment:
-      - ENABLE_WEB_CONSOLE=true
-      - SCRIPT_LOG_LEVEL=DEBUG
-      - APP_CONFIG=/app_data/app-config.yaml
-      - DESCRIPTOR_BUNDLE=/app_data/dashboard-descriptor-bundle.zip
-      - PROPS_FILE=/app_data/dashboard.properties
-      - KBL_SKIP_ENV_VAR_TEMP_FILE_ENCRYPTION=true
+  kube-cluster-1:
+    image: ${K3S_IMAGE:-rancher/k3s@sha256:08fdebd14db9ab7d5ea821d5bfa95d02341a6ef886842fcc8d9dfd0e9fa9e0cd}
+    privileged: true
+    command:
+      - server
+      - --disable=traefik
+      - --disable=metrics-server
+      - --node-name=kube-cluster-1
+      - --tls-san=kube-cluster-1
+      - --write-kubeconfig=/output/admin.yaml
+      - --write-kubeconfig-mode=644
+    tmpfs:
+      - /run
+      - /var/run
     volumes:
-      - ./app-config.yaml:/app_data/app-config.yaml
-      - ./dashboard-descriptor-bundle.zip:/app_data/dashboard-descriptor-bundle.zip
-      - ./dashboard.properties:/app_data/dashboard.properties
-      - ./k8s.ddl:/kubling_conf/k8s.ddl
-      - ./k8s_views.ddl:/kubling_conf/k8s_views.ddl
-      - ./kube_cluster_1.yaml:/kubling_conf/kube_cluster_1.yaml
-      - ./kube_cluster_2.yaml:/kubling_conf/kube_cluster_2.yaml
-    networks:
-      - kubling_network
+      - kube_cluster_1_data:/var/lib/rancher/k3s
+      - kube_cluster_1_config:/output
+    healthcheck:
+      test: ["CMD", "kubectl", "get", "--raw=/readyz"]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  kube-cluster-1-init:
+    image: ${K3S_IMAGE:-rancher/k3s@sha256:08fdebd14db9ab7d5ea821d5bfa95d02341a6ef886842fcc8d9dfd0e9fa9e0cd}
+    depends_on:
+      kube-cluster-1:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        sed 's#https://127.0.0.1:6443#https://kube-cluster-1:6443#'           /kubeconfig/admin.yaml > /kubeconfig/provider.yaml
+        chmod 644 /kubeconfig/provider.yaml
+        kubectl --kubeconfig /kubeconfig/provider.yaml apply -f /fixtures/fixture.yaml
+    volumes:
+      - kube_cluster_1_config:/kubeconfig
+      - ./fixtures:/fixtures:ro
+    restart: "no"
+
+  kube-provider-1:
+    image: ${KUBERNETES_PROVIDER_IMAGE:-kubling/kubernetes-provider@sha256:7a56323494ea6e38516f818b841bddaf105a3bf090953ffbe3d6835cff4bd1f0}
+    depends_on:
+      kube-cluster-1-init:
+        condition: service_completed_successfully
+    command: ["-listen", ":50051", "-config", "/config/provider.yaml"]
+    volumes:
+      - ./providers/cluster-1.yaml:/config/provider.yaml:ro
+      - kube_cluster_1_config:/kubeconfig:ro
+
+  kube-cluster-2:
+    image: ${K3S_IMAGE:-rancher/k3s@sha256:08fdebd14db9ab7d5ea821d5bfa95d02341a6ef886842fcc8d9dfd0e9fa9e0cd}
+    privileged: true
+    command:
+      - server
+      - --disable=traefik
+      - --disable=metrics-server
+      - --node-name=kube-cluster-2
+      - --tls-san=kube-cluster-2
+      - --write-kubeconfig=/output/admin.yaml
+      - --write-kubeconfig-mode=644
+    tmpfs:
+      - /run
+      - /var/run
+    volumes:
+      - kube_cluster_2_data:/var/lib/rancher/k3s
+      - kube_cluster_2_config:/output
+    healthcheck:
+      test: ["CMD", "kubectl", "get", "--raw=/readyz"]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  kube-cluster-2-init:
+    image: ${K3S_IMAGE:-rancher/k3s@sha256:08fdebd14db9ab7d5ea821d5bfa95d02341a6ef886842fcc8d9dfd0e9fa9e0cd}
+    depends_on:
+      kube-cluster-2:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        sed 's#https://127.0.0.1:6443#https://kube-cluster-2:6443#'           /kubeconfig/admin.yaml > /kubeconfig/provider.yaml
+        chmod 644 /kubeconfig/provider.yaml
+        kubectl --kubeconfig /kubeconfig/provider.yaml apply -f /fixtures/fixture.yaml
+    volumes:
+      - kube_cluster_2_config:/kubeconfig
+      - ./fixtures:/fixtures:ro
+    restart: "no"
+
+  kube-provider-2:
+    image: ${KUBERNETES_PROVIDER_IMAGE:-kubling/kubernetes-provider@sha256:7a56323494ea6e38516f818b841bddaf105a3bf090953ffbe3d6835cff4bd1f0}
+    depends_on:
+      kube-cluster-2-init:
+        condition: service_completed_successfully
+    command: ["-listen", ":50051", "-config", "/config/provider.yaml"]
+    volumes:
+      - ./providers/cluster-2.yaml:/config/provider.yaml:ro
+      - kube_cluster_2_config:/kubeconfig:ro
 
   timescaledb:
     image: timescale/timescaledb:2.17.2-pg16
-    container_name: timescaledb
-    ports:
-      - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "kubling_password"
+      POSTGRES_PASSWORD: ${TIMESCALE_PASSWORD:?Set TIMESCALE_PASSWORD in .env}
+      POSTGRES_USER: ${TIMESCALE_USER:-postgres}
     volumes:
       - timescale_data:/var/lib/postgresql/data
-      - ./db-init-scripts:/docker-entrypoint-initdb.d
-    networks:
-      - kubling_network
+      - ./db-init-scripts:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
 
-  init-superset:
-    image: alpine:latest
-    container_name: init-superset
-    entrypoint: >
-      sh -c "
-      chown 1000:1000 /app/superset_home/superset.db &&
-      chmod 664 /app/superset_home/superset.db
-      "
-    volumes:
-      - ./superset_home/superset.db:/app/superset_home/superset.db
-    networks:
-      - kubling_network
+  kubling:
+    image: ${KUBLING_IMAGE:?Set KUBLING_IMAGE in .env}
     depends_on:
-      - kubling
-    command: ""
+      timescaledb:
+        condition: service_healthy
+      kube-provider-1:
+        condition: service_started
+      kube-provider-2:
+        condition: service_started
+    ports:
+      - "${KUBLING_HTTP_PORT:-8282}:8282"
+      - "${KUBLING_GRPC_PORT:-55051}:55051"
+    environment:
+      ENABLE_WEB_CONSOLE: "true"
+      SCRIPT_LOG_LEVEL: INFO
+      APP_CONFIG: /app_data/app-config.yaml
+      DESCRIPTOR_BUNDLE: /app_data/dashboard-descriptor-bundle.zip
+      PROPS_FILE: /app_data/dashboard.properties
+      KBL_SKIP_ENV_VAR_TEMP_FILE_ENCRYPTION: "true"
+    volumes:
+      - ./app-config.yaml:/app_data/app-config.yaml:ro
+      - ${KUBLING_DESCRIPTOR_BUNDLE:?Run run-compose.sh}:/app_data/dashboard-descriptor-bundle.zip:ro
+      - ${KUBLING_PROPERTIES_FILE:?Run run-compose.sh}:/app_data/dashboard.properties:ro
+
+  superset-init:
+    image: ${SUPERSET_IMAGE:-kubling-dashboard-superset:26.2.0-py312}
+    depends_on:
+      kubling:
+        condition: service_started
+    environment:
+      EXAMPLE_NAME: ${EXAMPLE_NAME:?Run run-compose.sh}
+      SUPERSET_CONFIG_PATH: /app/pythonpath/kubling_superset_config.py
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:?Set SUPERSET_SECRET_KEY in .env}
+      SUPERSET_METADATA_URI: sqlite:////app/superset_home/superset.db
+      SUPERSET_ADMIN_USERNAME: ${SUPERSET_ADMIN_USERNAME:-admin}
+      SUPERSET_ADMIN_PASSWORD: ${SUPERSET_ADMIN_PASSWORD:?Set SUPERSET_ADMIN_PASSWORD in .env}
+      SUPERSET_ADMIN_EMAIL: ${SUPERSET_ADMIN_EMAIL:-admin@example.invalid}
+      KUBLING_GRPC_TARGET: ${KUBLING_GRPC_TARGET:-kubling:55051}
+      KUBLING_GRPC_USERNAME: ${KUBLING_GRPC_USERNAME:-}
+      KUBLING_GRPC_PASSWORD: ${KUBLING_GRPC_PASSWORD:-}
+      KUBLING_GRPC_INSECURE: ${KUBLING_GRPC_INSECURE:-true}
+      KUBLING_VDB_NAME: ${KUBLING_VDB_NAME:-Dashboard}
+      KUBLING_VDB_VERSION: ${KUBLING_VDB_VERSION:-0.1.0}
+    volumes:
+      - superset_data:/app/superset_home
+      - ..:/workspace:ro
+      - ../superset/superset_config.py:/app/pythonpath/kubling_superset_config.py:ro
+    entrypoint: ["/workspace/scripts/init-superset.sh"]
     restart: "no"
 
   superset:
-    image: kubling/kubling-superset:latest
-    container_name: superset
+    image: ${SUPERSET_IMAGE:-kubling-dashboard-superset:26.2.0-py312}
     depends_on:
-      - kubling
+      superset-init:
+        condition: service_completed_successfully
     ports:
-      - "8088:8088"
+      - "${SUPERSET_PORT:-8088}:8088"
     environment:
-      SUPERSET_ENV: production
-      SUPERSET_SECRET_KEY: ${SECRET_KEY}
+      SUPERSET_CONFIG_PATH: /app/pythonpath/kubling_superset_config.py
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:?Set SUPERSET_SECRET_KEY in .env}
+      SUPERSET_METADATA_URI: sqlite:////app/superset_home/superset.db
     volumes:
-      - ./superset_home/superset.db:/app/superset_home/superset.db
-    networks:
-      - kubling_network
-
-networks:
-  kubling_network:
-    driver: bridge
+      - superset_data:/app/superset_home
+      - ../superset/superset_config.py:/app/pythonpath/kubling_superset_config.py:ro
 
 volumes:
+  kube_cluster_1_data:
+  kube_cluster_1_config:
+  kube_cluster_2_data:
+  kube_cluster_2_config:
   timescale_data:
-    driver: local
+  superset_data:

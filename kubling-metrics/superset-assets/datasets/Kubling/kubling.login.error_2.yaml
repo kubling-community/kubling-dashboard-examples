@@ -1,0 +1,64 @@
+table_name: kubling.login.error
+main_dttm_col: _time
+currency_code_column: null
+description: null
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: 'SELECT CURRENT_TIMESTAMP as _time, (select count(_success) from tsdb_audit."kbl_audit.log_events"
+  WHERE _success = FALSE) as _count
+
+  '
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 6770803f-a66e-4747-8c39-af52793cfce7
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+  uuid: d80dd9a6-48d6-4f01-8a1c-e08f287f12a3
+columns:
+- column_name: _time
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIME
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: 8bb2a6d1-4b3d-4260-aca3-0d329c02e274
+- column_name: _count
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+  uuid: d952d4c8-6f2e-4905-9b76-f3b23ad2f124
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

@@ -1,0 +1,185 @@
+table_name: k8s.error.events
+main_dttm_col: observed_time
+currency_code_column: null
+description: Most recently observed warning event for each object and cluster.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT
+          e.clusterName,
+          e.metadata__namespace AS namespace,
+          e.regarding__kind AS regarding_kind,
+          e.regarding__name AS regarding_name,
+          e.type AS event_type,
+          e.reason,
+          e.note,
+          COALESCE(e.series__count, 1) AS occurrences,
+          COALESCE(e.series__lastObservedTime, e.eventTime, e.metadata__creationTimestamp) AS observed_time
+      FROM k8s.EVENT e
+      INNER JOIN (
+          SELECT
+              clusterName,
+              regarding__uid,
+              MAX(COALESCE(series__lastObservedTime, eventTime, metadata__creationTimestamp)) AS observed_time
+          FROM k8s.EVENT
+          WHERE type IN ('Warning', 'Error')
+            AND regarding__uid IS NOT NULL
+          GROUP BY clusterName, regarding__uid
+      ) latest
+          ON latest.clusterName = e.clusterName
+         AND latest.regarding__uid = e.regarding__uid
+         AND latest.observed_time = COALESCE(e.series__lastObservedTime, e.eventTime, e.metadata__creationTimestamp)
+      WHERE e.type IN ('Warning', 'Error')
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 03b887cc-86e4-41ec-bbf6-26ec28449a0c
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+  uuid: 7cd030c0-7c23-49c4-902a-7be52a3cb361
+columns:
+- column_name: clusterName
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 0bffd515-084d-4763-b643-56e0b0e1101c
+- column_name: namespace
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: f68bb763-8c1a-4a4f-bf68-04384aa799b0
+- column_name: regarding_kind
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 819dfca0-a760-5fbf-914f-d8033cb940e6
+- column_name: regarding_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: fe72d511-1fe3-5800-beec-e93994dc2b55
+- column_name: event_type
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 14087f6f-43ca-47f7-ba1a-92b131b573b0
+- column_name: reason
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 76f3af25-011d-4230-a106-e2ead459b940
+- column_name: note
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 88ad165a-18ae-443b-9b5b-1ab8716cc360
+- column_name: occurrences
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: f04da500-04b6-5216-acf3-2478dce17912
+- column_name: observed_time
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIME
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 051a7c4e-ec58-589a-9aa0-c222a63490bd
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

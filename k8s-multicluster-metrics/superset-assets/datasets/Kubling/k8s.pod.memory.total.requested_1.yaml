@@ -1,0 +1,67 @@
+table_name: k8s.pod.memory.total.requested
+main_dttm_col: null
+currency_code_column: null
+description: Effective memory requests for active pods across all clusters, in GiB.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: null
+sql: |
+  SELECT COALESCE(SUM(
+          CASE WHEN requests.app_memory >= requests.init_memory
+               THEN requests.app_memory ELSE requests.init_memory END
+          + requests.overhead_memory
+      ), 0) / 1073741824 AS total_memory_gib
+      FROM (
+  SELECT
+              p.identifier AS pod_identifier,
+              p.clusterName,
+              p.metadata__namespace AS namespace,
+              COALESCE(CAST(jsonJqAsString(p.spec__containers, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.cpu // "0") | cpu) | add // 0') AS double), 0) AS app_cpu,
+              COALESCE(CAST(jsonJqAsString(p.spec__initContainers, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.cpu // "0") | cpu) | max // 0') AS double), 0) AS init_cpu,
+              COALESCE(CAST(jsonJqAsString(p.spec__overhead, 'def cpu: if endswith("n") then (rtrimstr("n") | tonumber) / 1000000000 elif endswith("u") then (rtrimstr("u") | tonumber) / 1000000 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.cpu // "0") | cpu') AS double), 0) AS overhead_cpu,
+              COALESCE(CAST(jsonJqAsString(p.spec__containers, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.memory // "0") | bytes) | add // 0') AS double), 0) AS app_memory,
+              COALESCE(CAST(jsonJqAsString(p.spec__initContainers, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // []) | map((.resources.requests.memory // "0") | bytes) | max // 0') AS double), 0) AS init_memory,
+              COALESCE(CAST(jsonJqAsString(p.spec__overhead, 'def bytes: if endswith("Ki") then (rtrimstr("Ki") | tonumber) * 1024 elif endswith("Mi") then (rtrimstr("Mi") | tonumber) * 1048576 elif endswith("Gi") then (rtrimstr("Gi") | tonumber) * 1073741824 elif endswith("Ti") then (rtrimstr("Ti") | tonumber) * 1099511627776 elif endswith("Pi") then (rtrimstr("Pi") | tonumber) * 1125899906842624 elif endswith("Ei") then (rtrimstr("Ei") | tonumber) * 1152921504606846976 elif endswith("m") then (rtrimstr("m") | tonumber) / 1000 elif endswith("k") then (rtrimstr("k") | tonumber) * 1000 elif endswith("M") then (rtrimstr("M") | tonumber) * 1000000 elif endswith("G") then (rtrimstr("G") | tonumber) * 1000000000 elif endswith("T") then (rtrimstr("T") | tonumber) * 1000000000000 elif endswith("P") then (rtrimstr("P") | tonumber) * 1000000000000000 elif endswith("E") then (rtrimstr("E") | tonumber) * 1000000000000000000 else tonumber end; (. // {}) | (.memory // "0") | bytes') AS double), 0) AS overhead_memory
+          FROM k8s.POD p
+          WHERE COALESCE(p.status__phase, '') NOT IN ('Succeeded', 'Failed')
+      ) requests
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: null
+uuid: 5e591578-e5fd-4aa2-8aac-27a8ef12ac03
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+  uuid: c5b7357c-fef7-4f41-820b-a63b1674c75a
+columns:
+- column_name: total_memory_gib
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: FLOAT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: {}
+  uuid: 237e8098-a6e6-5938-b19e-82d718ff4cd5
+version: 1.0.0
+database_uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709

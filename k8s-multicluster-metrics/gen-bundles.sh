@@ -1,2 +1,5 @@
-#!/bin/bash
-docker run --rm -v $(pwd):/base kubling/kubling-cli:latest bundle genmod /base/descriptor -o /base/dashboard-descriptor-bundle.zip --parse
+#!/usr/bin/env bash
+set -euo pipefail
+
+example_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+exec "$example_dir/../scripts/generate-bundle.sh" "k8s-multicluster-metrics"

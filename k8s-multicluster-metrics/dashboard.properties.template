@@ -1,0 +1,10 @@
+vdb_name = ${KUBLING_VDB_NAME}
+vdb_version = ${KUBLING_VDB_VERSION}
+
+timescale_host = ${TIMESCALE_HOST}
+timescale_port = ${TIMESCALE_PORT}
+timescale_db = ${TIMESCALE_DATABASE}
+timescale_user = ${TIMESCALE_USER}
+timescale_password = ${TIMESCALE_PASSWORD}
+
+timescale_metrics_schema = ${TIMESCALE_METRICS_SCHEMA}
