@@ -1,80 +1,78 @@
-# Kubling Dashboard Examples
+# Kubling dashboard examples
 
-[![Kubling license](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
+These examples run Apache Superset against Kubling through the native gRPC
+SQLAlchemy dialect. TimescaleDB stores historical samples, while Kubling remains
+the only database connection configured in Superset.
 
-This collection provides **ready-to-use resources** to help you get started with Kubling and explore powerful dashboards 
-tailored for various use cases. Each example includes Kubling Modules, predefined dashboards, and all necessary configurations 
-to streamline your setup.
+| Example | What it shows |
+| --- | --- |
+| [`kubling-metrics`](kubling-metrics/) | Kubling runtime metrics and audit history. |
+| [`k8s-multicluster-metrics`](k8s-multicluster-metrics/) | A federated view of two Kubernetes clusters plus historical resource demand. |
 
-## Repository Structure
+The Superset database, datasets, charts and dashboards live as YAML under each
+example's `superset-assets` directory. Startup creates a fresh Superset metadata
+database and imports those assets; generated databases and ZIP files are not
+source files.
 
-Each directory in this repository represents a distinct use case or integration. Inside each folder, you will find:
-- **Kubling Resources**: Preconfigured descriptor and data sources modules, app configuration and properties.
-- **Predefined Dashboards**: Dashboards tailored to visualize specific data sources or use cases.
-- **Docker Compose Configurations**: Scripts to quickly spin up the required services and Kubling environment.
-- **Documentation**: Instructions to guide you through the setup process.
+## Requirements
 
-### Important Directories
-- `descriptor`: contains the main Kubling descriptor module.
-- `db-init-scripts`: contains the TimescaleDB initialization script.
-- `superset_home`: contains the Superset's preconfigured Database that contains data sources, datasets and dashboards.
+- Docker with the Compose plugin
+- network access to Docker Hub and PyPI on the first build
+- the public Kubling 26.5 image pinned by digest in each example
 
-## Examples Included
+The local Superset image uses Python 3.12. Both Apache Superset and Kubling are
+pinned by digest so repeated builds use the same published images.
 
-| Example Name             | Description                                                                  |
-|--------------------------|------------------------------------------------------------------------------|
-| **`kubling-metrics`**    | Visualize data from GitHub repositories, including commits and contributors. |
-| **`k8s-monitoring`**     | Dashboards for Kubernetes cluster metrics and resource management.           |
+## Run an example
 
-## Components
+Copy the sample environment and replace every `change-me` value:
 
-All examples use the following components:
-- **Kubling**: As the main database.
-- **TimescaleDB**: As the time-series database.
-- **Superset**: For building and visualizing the dashboard.
+```bash
+cp kubling-metrics/.env.example kubling-metrics/.env
+${EDITOR:-vi} kubling-metrics/.env
+```
 
-## Getting Started
+`KUBLING_IMAGE` may be a local image name or a registry reference. Use a strong,
+independent value for `SUPERSET_SECRET_KEY`; for example:
 
-### Prerequisites
-To use these examples, you will need:
-- **Docker** and **Docker Compose** installed on your system.
-- Basic knowledge of Kubling and dashboard configuration.
-- Access to the relevant data sources for each example.
+```bash
+openssl rand -hex 32
+```
 
-### Running an Example
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/your-organization/kubling-dashboard-examples.git
-   cd kubling-dashboard-examples
-   ```
-2. Navigate to the desired example directory:
-   ```bash
-   cd kubling-metrics
-   ```
-3. Run the Docker Compose setup:
-   ```bash
-    sh run-compose.sh
-   ```
-4. Access Kubling and the dashboard in your browser:
-  - Kubling Console: http://localhost:8282/console
-  - Dashboard (Superset): http://localhost:8088
+Start the stack from the repository root:
 
-## Community Edition Limitations
-This edition has certain limitations that may affect the behavior of your dashboards:
-- Scripts defined in the Descriptor module are limited to **3**.
-- Scripts defined in the Data Source module are limited to **1**.
-- The Authentication Script Delegate is limited to **5 concurrent script contexts**.
+```bash
+./kubling-metrics/run-compose.sh
+```
 
-These limitations should not impede the creation of dashboards or the setup of Kubling's development environments.
+The same flow works for `k8s-multicluster-metrics`. It starts two local k3s
+fixtures and connects them through the released Kubernetes provider.
 
-### Customizing Examples
-Examples are just starting points you can use as a foundational idea for your own requirements and are not intended 
-to be used in production environments.
+Once startup finishes:
 
-## Contributing
-We welcome contributions to expand this repository and cover as many use cases as possible!
-If you have an idea for a new example or improvements to existing ones, feel free to:
-- Fork the repository.
-- Create a new branch.
-- Submit a pull request.
+- Kubling console: <http://localhost:8282/console>
+- Superset: <http://localhost:8088/>
 
+Superset connects to `kubling:55051` with `kubling+grpc`. PostgreSQL and the
+legacy native Kubling transports are disabled in these examples.
+
+Stop an example and remove its generated metadata and TimescaleDB data with:
+
+```bash
+./kubling-metrics/stop-compose.sh
+```
+
+## Updating assets
+
+Edit or export the YAML under `superset-assets`, then verify that it packages
+deterministically:
+
+```bash
+python3 scripts/package-superset-assets.py
+```
+
+The descriptor bundle and rendered properties are also generated at runtime
+under `.build/`. They should never be committed.
+
+These stacks are development examples. Review credentials, TLS, persistence and
+resource limits before adapting one for a production deployment.
