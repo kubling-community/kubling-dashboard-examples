@@ -1,8 +1,8 @@
 # Superset development image
 
 This image installs the released `kubling-sqlalchemy` package into Apache
-Superset's minimal image. The driver version, Superset source commit, Python 3.12
-variant and multi-platform digest are fixed in `Dockerfile`.
+Superset's minimal image. The driver version and the Apache Superset base are
+declared in `Dockerfile`.
 
 Build the candidate from the repository root:
 
@@ -10,7 +10,7 @@ Build the candidate from the repository root:
 ./scripts/build-superset.sh
 ```
 
-The build installs `kubling-sqlalchemy==26.2.0` from PyPI. Set
+The build installs the driver version declared in `Dockerfile` from PyPI. Set
 `KUBLING_SQLALCHEMY_VERSION`, `SUPERSET_BASE` or `SUPERSET_IMAGE` to override an
 input; use a published driver version so the build remains reproducible.
 

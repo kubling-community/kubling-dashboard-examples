@@ -39,8 +39,8 @@ def main() -> None:
     for name, expected in EXAMPLES.items():
         example = ROOT / name
         env_example = (example / ".env.example").read_text(encoding="utf-8")
-        if "KUBLING_IMAGE=kubling/kubling:26.5@sha256:" not in env_example:
-            fail(f"{name}/.env.example must pin the public Kubling 26.5 image")
+        if "KUBLING_IMAGE=kubling/kubling:latest" not in env_example:
+            fail(f"{name}/.env.example must use the current public Kubling image")
         assets = example / "superset-assets"
         actual = {kind: count_yaml(assets / kind) for kind in expected}
         if actual != expected:

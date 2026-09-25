@@ -18,10 +18,10 @@ source files.
 
 - Docker with the Compose plugin
 - network access to Docker Hub and PyPI on the first build
-- the public Kubling 26.5 image pinned by digest in each example
+- the current public Kubling image selected through `kubling/kubling:latest`
 
-The local Superset image uses Python 3.12. Both Apache Superset and Kubling are
-pinned by digest so repeated builds use the same published images.
+The local Superset image starts from an official Apache Superset image pinned
+by digest. Kubling follows the current public `latest` image.
 
 ## Run an example
 
