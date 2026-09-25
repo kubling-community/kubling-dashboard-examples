@@ -2,4 +2,4 @@
 set -euo pipefail
 
 example_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-exec "$example_dir/../scripts/run-example.sh" "kubling-metrics"
+exec "$example_dir/../scripts/stop-example.sh" "kubling-metrics"

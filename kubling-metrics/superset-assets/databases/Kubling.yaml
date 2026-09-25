@@ -1,0 +1,15 @@
+database_name: Kubling
+sqlalchemy_uri: kubling+grpc://kubling:55051/Dashboard?insecure=true&vdb_version=0.1.0
+cache_timeout: null
+expose_in_sqllab: true
+allow_run_async: false
+allow_ctas: false
+allow_cvas: false
+allow_dml: false
+allow_file_upload: false
+extra:
+  allows_virtual_table_explore: true
+impersonate_user: false
+configuration_method: sqlalchemy_form
+uuid: 7ec9e8b8-85b7-4ddb-a3fe-f7c5d0973709
+version: 1.0.0
